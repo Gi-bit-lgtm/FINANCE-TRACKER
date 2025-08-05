@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFinances - Personal Finance Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav__brand">
+                <h1>💰 MyFinances</h1>
+            </div>
+            <div class="nav__menu">
+                <button class="nav__item nav__item--active" data-view="dashboard">Dashboard</button>
+                <button class="nav__item" data-view="transactions">Transactions</button>
+                <button class="nav__item" data-view="budget">Budget</button>
+                <button class="nav__item" data-view="reports">Reports</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard View -->
+            <div class="view view--active" id="dashboard">
+                <div class="container">
+                    <div class="view__header">
+                        <h2>Financial Dashboard</h2>
+                        <p class="view__subtitle">Overview of your financial status in Indian Rupees</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card--balance">
+                            <div class="stat-card__icon">💰</div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__label">Total Balance</h3>
+                                <div class="stat-card__value" id="totalBalance">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--income">
+                            <div class="stat-card__icon">📈</div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__label">Monthly Income</h3>
+                                <div class="stat-card__value" id="monthlyIncome">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--expenses">
+                            <div class="stat-card__icon">📉</div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__label">Monthly Expenses</h3>
+                                <div class="stat-card__value" id="monthlyExpenses">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--savings">
+                            <div class="stat-card__icon">💎</div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__label">Monthly Savings</h3>
+                                <div class="stat-card__value" id="monthlySavings">₹0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="chart-card">
+                            <h3>Expense Breakdown</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="expenseChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Income vs Expenses</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="incomeExpenseChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions">
+                        <h3>Recent Transactions</h3>
+                        <div class="transactions-list" id="recentTransactionsList">
+                            <!-- Recent transactions will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions View -->
+            <div class="view" id="transactions">
+                <div class="container">
+                    <div class="view__header">
+                        <h2>Transactions</h2>
+                        <button class="btn btn--primary" id="addTransactionBtn">Add Transaction</button>
+                    </div>
+
+                    <!-- Transaction Filters -->
+                    <div class="filters">
+                        <div class="filter-group">
+                            <select class="form-control" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <select class="form-control" id="categoryFilter">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <input type="text" class="form-control" id="searchFilter" placeholder="Search transactions...">
+                        </div>
+                    </div>
+
+                    <!-- Transactions Table -->
+                    <div class="transactions-table">
+                        <div id="transactionsList">
+                            <!-- Transactions will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget View -->
+            <div class="view" id="budget">
+                <div class="container">
+                    <div class="view__header">
+                        <h2>Budget Management</h2>
+                        <p class="view__subtitle">Set and monitor your spending limits in Indian Rupees</p>
+                    </div>
+
+                    <div class="budget-grid" id="budgetGrid">
+                        <!-- Budget cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div class="view" id="reports">
+                <div class="container">
+                    <div class="view__header">
+                        <h2>Financial Reports</h2>
+                        <p class="view__subtitle">Visual analytics and summaries in Indian Rupees</p>
+                    </div>
+
+                    <div class="reports-grid">
+                        <div class="chart-card">
+                            <h3>Monthly Spending Trend</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Budget Performance</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="budgetChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal hidden" id="transactionModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3>Add Transaction</h3>
+                <button class="modal__close" id="closeModalBtn">&times;</button>
+            </div>
+            <form class="modal__body" id="transactionForm">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-control" id="transactionType" required>
+                        <option value="">Select type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" class="form-control" id="transactionAmount" step="0.01" min="0" required placeholder="Enter amount in rupees">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-control" id="transactionCategory" required>
+                        <option value="">Select category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" id="transactionDescription" required placeholder="Enter transaction description">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Source</label>
+                    <input type="text" class="form-control" id="transactionSource" placeholder="Enter source (optional)">
+                </div>
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Add Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
